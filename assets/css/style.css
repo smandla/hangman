@@ -1,0 +1,82 @@
+* {
+  --pink: #f81a4e;
+  font-size: 24px;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #121212;
+  color: var(--pink);
+}
+header {
+  border-bottom: 3px solid #222;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  /* justify-content: center; */
+}
+main {
+  /* margin: 1rem 0; */
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  position: fixed;
+}
+.game {
+  /* background: blue; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /* width: 100%;
+  margin: 0 auto;
+  height: 100%;
+  background: blue;
+  justify-content: center;
+  align-items: center; */
+}
+.word {
+  width: 100%;
+  /* background: white; */
+  padding: 2rem;
+  /* margin: 0 auto; */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.section {
+  /* background-color: red; */
+  width: 100%;
+}
+.letter {
+  font-size: 230%;
+}
+.word_section {
+  border: 1px solid var(--pink);
+  width: 100%;
+}
+.keyboard_section {
+  width: 100%;
+  height: 100%;
+  margin: 1rem;
+  /* background: purple; */
+}
+.row {
+  margin: 10px;
+}
+button {
+  width: 8%;
+  height: 100%;
+  margin: 0;
+  background: var(--pink);
+  height: 60px;
+  border: none;
+}
+button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
