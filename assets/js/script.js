@@ -7,21 +7,13 @@ const keyboardArr = [
 var words = ["javascript", "pet", "dinosaur", "toddler", "antacid"];
 var answer = words[Math.floor(Math.random() * words.length)];
 let lettersGuessed = 0;
+var guessedWord = "";
 function init() {
   generateKeyboard();
   generateWord();
 }
 var wordEl = $("#word");
 function generateWord() {
-  /**
-     *   <span class="letter">_</span>
-            <span class="letter">_</span>
-            <span class="letter">_</span>
-            <span class="letter">_</span>
-            <span class="letter">_</span>
-            <span class="letter">_</span>
-            <span class="letter">_</span>
-     */
   for (let i = 0; i < answer.length; i++) {
     var letterEl = $("<span>")
       .addClass("letter")
@@ -40,35 +32,89 @@ function generateKeyboard() {
       var buttonEl = $("<button>")
         .attr("id", keyboardArr[i][j])
         .text(keyboardArr[i][j])
-        .on("click", (e) => {
+        .on("click", function (e) {
           e.preventDefault();
-          console.log(e.target.innerHTML);
+          console.log(e.target.innerHTML.toLowerCase());
+          if (e.target.innerHTML.length === 1) {
+            // console.log(e.code[e.code.length - 1]);
+            addLetter(e.target.innerHTML.toLowerCase());
+          }
+          if (e.target.innerHTML === "Enter") {
+            // console.log("user entered");
+            if (lettersGuessed !== answer.length) {
+              incompleteWord();
+            } else {
+              if (guessedWord === answer) {
+                gameWon();
+              } else {
+                guessAgain();
+              }
+            }
+          }
+          if (e.target.innerHTML === "Backspace") {
+            console.log(lettersGuessed);
+            removeLetter();
+          }
         });
       buttonEl.appendTo(colEl);
     }
   }
 }
 init();
-var guessedWord = "";
+
 document.addEventListener("keydown", (e) => {
   // console.log(e.key);
   if (e.code.length === 4) {
     // console.log(e.code[e.code.length - 1]);
-    $(`#letter_${lettersGuessed}`).text(e.key);
-    guessedWord += e.key;
-    lettersGuessed++;
-    console.log("added", guessedWord);
+    addLetter(e.key);
   }
   if (e.key === "Enter") {
-    console.log("user entered");
+    // console.log("user entered");
     if (lettersGuessed !== answer.length) {
+      incompleteWord();
+    } else {
+      if (guessedWord === answer) {
+        gameWon();
+      } else {
+        guessAgain();
+      }
     }
   }
   if (e.key === "Backspace") {
-    lettersGuessed--;
-    // console.log(guessedWord);
-    console.log("removed", guessedWord.slice(0, -1));
-    guessedWord = guessedWord.slice(0, -1);
-    $(`#letter_${lettersGuessed}`).text("_");
+    console.log(lettersGuessed);
+    removeLetter();
   }
 });
+function removeLetter() {
+  lettersGuessed--;
+  if (lettersGuessed < 0) {
+    lettersGuessed = 0;
+  }
+  // console.log(guessedWord);
+  console.log("removed", guessedWord.slice(0, -1));
+  guessedWord = guessedWord.slice(0, -1);
+  $(`#letter_${lettersGuessed}`).text("_");
+}
+function guessAgain() {
+  console.log("guess again");
+}
+function gameWon() {
+  console.log("you won!");
+  wordEl.html("d");
+  resetGame();
+}
+function resetGame() {
+  generateWord();
+}
+function incompleteWord() {
+  alert("Finish typing the word");
+}
+function addLetter(letter) {
+  if (lettersGuessed !== answer.length) {
+    $(`#letter_${lettersGuessed}`).text(letter);
+    guessedWord += letter;
+    lettersGuessed++;
+    console.log(lettersGuessed);
+    console.log("added", guessedWord);
+  }
+}
