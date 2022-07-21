@@ -49,17 +49,26 @@ function generateKeyboard() {
   }
 }
 init();
+var guessedWord = "";
 document.addEventListener("keydown", (e) => {
-  console.log(e.key);
+  // console.log(e.key);
   if (e.code.length === 4) {
-    console.log(e.code[e.code.length - 1]);
+    // console.log(e.code[e.code.length - 1]);
     $(`#letter_${lettersGuessed}`).text(e.key);
+    guessedWord += e.key;
     lettersGuessed++;
-    v;
+    console.log("added", guessedWord);
   }
   if (e.key === "Enter") {
     console.log("user entered");
+    if (lettersGuessed !== answer.length) {
+    }
   }
   if (e.key === "Backspace") {
+    lettersGuessed--;
+    // console.log(guessedWord);
+    console.log("removed", guessedWord.slice(0, -1));
+    guessedWord = guessedWord.slice(0, -1);
+    $(`#letter_${lettersGuessed}`).text("_");
   }
 });
