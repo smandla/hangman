@@ -2,10 +2,11 @@ var keyboardSectionEl = $("#keyboard_section");
 const keyboardArr = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["Z", "X", "C", "V", "B", "N", "M", "Enter"],
+  ["Backspace", "Z", "X", "C", "V", "B", "N", "M", "Enter"],
 ];
 var words = ["javascript", "pet", "dinosaur", "toddler", "antacid"];
 var answer = words[Math.floor(Math.random() * words.length)];
+let lettersGuessed = 0;
 function init() {
   generateKeyboard();
   generateWord();
@@ -22,7 +23,10 @@ function generateWord() {
             <span class="letter">_</span>
      */
   for (let i = 0; i < answer.length; i++) {
-    var letterEl = $("<span>").addClass("letter").text("_");
+    var letterEl = $("<span>")
+      .addClass("letter")
+      .text("_")
+      .attr("id", `letter_${i}`);
     letterEl.appendTo(wordEl);
   }
 }
@@ -45,6 +49,17 @@ function generateKeyboard() {
   }
 }
 init();
-document.addEventListener("keypress", (e) => {
-  console.log(e.code);
+document.addEventListener("keydown", (e) => {
+  console.log(e.key);
+  if (e.code.length === 4) {
+    console.log(e.code[e.code.length - 1]);
+    $(`#letter_${lettersGuessed}`).text(e.key);
+    lettersGuessed++;
+    v;
+  }
+  if (e.key === "Enter") {
+    console.log("user entered");
+  }
+  if (e.key === "Backspace") {
+  }
 });
