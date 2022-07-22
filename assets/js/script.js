@@ -2,7 +2,7 @@ var keyboardSectionEl = $("#keyboard_section");
 const keyboardArr = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["Backspace", "Z", "X", "C", "V", "B", "N", "M", "Enter"],
+  ["Z", "X", "C", "V", "B", "N", "M"],
 ];
 var words = ["javascript", "pet", "dinosaur", "toddler", "antacid"];
 var answer = words[Math.floor(Math.random() * words.length)];
@@ -83,6 +83,17 @@ document.addEventListener("keypress", (e) => {
   // console.log(guessWordSection.children.length);
   // console.log(e.code);
   if (e.code.length === 4) {
+    if (!answer.includes(letter)) {
+      console.log("else");
+
+      // console.log("wrong letter");
+      // console.log($(`#${letter.toUpperCase()}`));
+      $(`#${letter.toUpperCase()}`)[0].disabled = true;
+      Draw(draws[step++]);
+      if (undefined === draws[step]) this.disabled = true;
+      // console.log($(`#${letter.toUpperCase()}`)[0].disabled);
+      // break;d
+    }
     for (let i = 0; i < guessWordSection.children.length; i++) {
       if (letter === answer[i]) {
         // guessWordSection.children[i].style.color = "#442342";
@@ -90,12 +101,6 @@ document.addEventListener("keypress", (e) => {
         // console.log("letterCount", letterCount);
         letterCount += 1;
         console.log("here");
-      } else {
-        console.log("else");
-        // console.log("wrong letter");
-        // console.log($(`#${letter.toUpperCase()}`));
-        $(`#${letter.toUpperCase()}`)[0].disabled = true;
-        // console.log($(`#${letter.toUpperCase()}`)[0].disabled);
       }
     }
     console.log(letterCount, answer.length);
