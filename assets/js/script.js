@@ -9,6 +9,7 @@ var answer = words[Math.floor(Math.random() * words.length)];
 let lettersGuessed = 0;
 var guessedWord = "";
 var guessWordSection = document.getElementById("guess_word_section");
+var wrongGuessSection = document.getElementById("wrong_guess_section");
 var wordEl = $("#word_section");
 init();
 var inArr = [];
@@ -61,7 +62,7 @@ function generateKeyboard() {
           e.preventDefault();
           // console.log(e.target.innerHTML.toLowerCase());
           if (e.target.innerHTML.length === 1) {
-            // console.log(e.code[e.code.length - 1]);
+            console.log(e.target.innerHTML.toLowerCase());
             addLetter(e.target.innerHTML.toLowerCase());
           }
         });
@@ -88,16 +89,22 @@ document.addEventListener("keypress", (e) => {
       letterCount -= 1;
     }
     if (!answer.includes(letter)) {
-      wrongArr.push(letter);
-      $(`#${letter.toUpperCase()}`)[0].disabled = true;
-      Draw(draws[step++]);
-      if (undefined === draws[step]) {
-        $("#gameOverModal").modal();
-        $("#reset_button").on("click", function (e) {
-          e.preventDefault();
-          $("#gameOverModal").modal("hide");
-          resetGame();
-        });
+      if (!wrongArr.includes(letter)) {
+        console.log(letter);
+        wrongArr.push(letter);
+        var wrongLetter = document.createElement("div");
+        wrongLetter.innerText = letter;
+        wrongGuessSection.appendChild(wrongLetter);
+        $(`#${letter.toUpperCase()}`)[0].disabled = true;
+        Draw(draws[step++]);
+        if (undefined === draws[step]) {
+          $("#gameOverModal").modal();
+          $("#reset_button").on("click", function (e) {
+            e.preventDefault();
+            $("#gameOverModal").modal("hide");
+            resetGame();
+          });
+        }
       }
     }
     if (answer.includes(letter)) {
