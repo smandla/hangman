@@ -1,5 +1,7 @@
 * {
   --pink: #f81a4e;
+  --pinkish: #ec184c;
+  --dark: #890022;
   font-size: 24px;
 }
 
@@ -56,9 +58,11 @@ main {
   font-size: 230%;
   margin: 10px;
 }
-.word_section {
+.guess_word_section {
   border: 1px solid var(--pink);
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .keyboard_section {
   width: 100%;
@@ -87,4 +91,52 @@ button:hover {
 .drawing {
   height: 100%;
   background: purple;
+}
+.modal_bg {
+  background-color: #121212;
+}
+.modal-header {
+  border: none;
+}
+.modal-footer {
+  border-top: 1px solid #222;
+}
+.btn-primary {
+  background: var(--pinkish);
+  border: none;
+  color: black;
+}
+.btn-secondary {
+  background: var(--dark);
+  border: none;
+  color: black;
+}
+.btn-primary:hover {
+  background: var(--pinkish);
+  border: none;
+  color: black;
+  opacity: 0.7;
+}
+.btn-secondary:hover {
+  background: var(--dark);
+  border: none;
+  color: black;
+  opacity: 0.7;
+}
+#container,
+.buttons {
+  text-align: center;
+  margin: 0px auto;
+}
+
+/* button {
+  padding: 10px;
+  margin: 10px;
+  border: none;
+  font-size: 1.4em;
+  cursor: pointer;
+} */
+
+canvas {
+  text-align: center;
 }
