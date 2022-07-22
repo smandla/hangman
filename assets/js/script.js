@@ -63,6 +63,8 @@ function generateKeyboard() {
   }
 }
 init();
+var inArr = [];
+var wrongArr = [];
 function checkLetter(letter) {
   // console.log(letter, answer[lettersGuessed]);
   if (letter === answer[lettersGuessed]) {
@@ -83,23 +85,36 @@ document.addEventListener("keypress", (e) => {
   // console.log(guessWordSection.children.length);
   // console.log(e.code);
   if (e.code.length === 4) {
+    if (inArr.includes(letter)) {
+      letterCount -= 1;
+    }
     if (!answer.includes(letter)) {
       console.log("else");
 
       // console.log("wrong letter");
       // console.log($(`#${letter.toUpperCase()}`));
+      wrongArr.push(letter);
       $(`#${letter.toUpperCase()}`)[0].disabled = true;
       Draw(draws[step++]);
       if (undefined === draws[step]) this.disabled = true;
       // console.log($(`#${letter.toUpperCase()}`)[0].disabled);
       // break;d
     }
+    if (answer.includes(letter)) {
+      if (!inArr.includes(letter)) {
+        inArr.push(letter);
+      }
+    }
     for (let i = 0; i < guessWordSection.children.length; i++) {
       if (letter === answer[i]) {
         // guessWordSection.children[i].style.color = "#442342";
+
         guessWordSection.children[i].innerHTML = letter;
         // console.log("letterCount", letterCount);
+
         letterCount += 1;
+
+        console.log(inArr, wrongArr);
         console.log("here");
       }
     }
@@ -113,6 +128,7 @@ document.addEventListener("keypress", (e) => {
       console.log(letterCount, answer.length);
       console.log(guessedWord, answer);
       if (guessedWord === answer) {
+        console.log(inArr, wrongArr);
         gameWon();
       } else {
         guessAgain();
