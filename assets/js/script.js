@@ -9,21 +9,44 @@ var answer = words[Math.floor(Math.random() * words.length)];
 let lettersGuessed = 0;
 var guessedWord = "";
 var guessWordSection = document.getElementById("guess_word_section");
+var wordEl = $("#word_section");
+init();
+var inArr = [];
+var wrongArr = [];
+let letterCount = 0;
+const canvas = document.getElementById("hangman");
+const context = canvas.getContext("2d");
+const draws = [
+  "head",
+  // "rightEye",
+  // "leftEye",
+  "body",
+  "rightHarm",
+  "leftHarm",
+  "rightLeg",
+  "leftLeg",
+  "rightFoot",
+  "leftFoot",
+];
+
+var step = 0;
+
+context.strokeStyle = "#444";
+context.lineWidth = 10;
+context.beginPath();
+context.moveTo(175, 225);
+context.lineTo(5, 225);
+context.moveTo(40, 225);
+context.lineTo(40, 5);
+context.lineTo(100, 5);
+context.lineTo(100, 25);
+context.stroke();
 
 function init() {
   generateKeyboard();
-  // generateWord();
+  generateWord();
 }
-var wordEl = $("#word_section");
-// function generateWord() {
-//   for (let i = 0; i < answer.length; i++) {
-//     var letterEl = $("<div>")
-//       .addClass("letter")
-//       .text("_")
-//       .attr("id", `letter_${i}`);
-//     letterEl.appendTo(wordEl);
-//   }
-// }
+
 function generateKeyboard() {
   for (let i = 0; i < keyboardArr.length; i++) {
     var rowEl = $("<div>").addClass("row");
@@ -41,64 +64,41 @@ function generateKeyboard() {
             // console.log(e.code[e.code.length - 1]);
             addLetter(e.target.innerHTML.toLowerCase());
           }
-          if (e.target.innerHTML === "Enter") {
-            // console.log("user entered");
-            if (lettersGuessed !== answer.length) {
-              incompleteWord();
-            } else {
-              if (guessedWord === answer) {
-                gameWon();
-              } else {
-                guessAgain();
-              }
-            }
-          }
-          if (e.target.innerHTML === "Backspace") {
-            // console.log(lettersGuessed);
-            removeLetter();
-          }
         });
       buttonEl.appendTo(colEl);
     }
   }
 }
-init();
-var inArr = [];
-var wrongArr = [];
-function checkLetter(letter) {
-  // console.log(letter, answer[lettersGuessed]);
-  if (letter === answer[lettersGuessed]) {
+
+function generateWord() {
+  for (i = 0; i < answer.length; i++) {
+    var letterDiv = document.createElement("div");
+    letterDiv.innerHTML = "_";
+    letterDiv.setAttribute("tabindex", i);
+    letterDiv.setAttribute("id", i);
+    letterDiv.setAttribute("class", "letter");
+    guessWordSection.appendChild(letterDiv);
   }
 }
-for (i = 0; i < answer.length; i++) {
-  letterDiv = document.createElement("div");
-  letterDiv.innerHTML = "_";
-  letterDiv.setAttribute("tabindex", i);
-  letterDiv.setAttribute("id", i);
-  letterDiv.setAttribute("class", "letter");
 
-  guessWordSection.appendChild(letterDiv);
-}
-let letterCount = 0;
 document.addEventListener("keypress", (e) => {
   var letter = e.code[e.code.length - 1].toLowerCase();
-  // console.log(guessWordSection.children.length);
-  // console.log(e.code);
   if (e.code.length === 4) {
     if (inArr.includes(letter)) {
       letterCount -= 1;
     }
     if (!answer.includes(letter)) {
-      console.log("else");
-
-      // console.log("wrong letter");
-      // console.log($(`#${letter.toUpperCase()}`));
       wrongArr.push(letter);
       $(`#${letter.toUpperCase()}`)[0].disabled = true;
       Draw(draws[step++]);
-      if (undefined === draws[step]) this.disabled = true;
-      // console.log($(`#${letter.toUpperCase()}`)[0].disabled);
-      // break;d
+      if (undefined === draws[step]) {
+        $("#gameOverModal").modal();
+        $("#reset_button").on("click", function (e) {
+          e.preventDefault();
+          $("#gameOverModal").modal("hide");
+          resetGame();
+        });
+      }
     }
     if (answer.includes(letter)) {
       if (!inArr.includes(letter)) {
@@ -107,111 +107,53 @@ document.addEventListener("keypress", (e) => {
     }
     for (let i = 0; i < guessWordSection.children.length; i++) {
       if (letter === answer[i]) {
-        // guessWordSection.children[i].style.color = "#442342";
-
         guessWordSection.children[i].innerHTML = letter;
-        // console.log("letterCount", letterCount);
-
         letterCount += 1;
-
-        console.log(inArr, wrongArr);
-        console.log("here");
       }
     }
-    console.log(letterCount, answer.length);
     if (letterCount === answer.length) {
       for (let j = 0; j < guessWordSection.children.length; j++) {
-        console.log("ion");
-        console.log(guessWordSection.children[j].innerHTML);
         guessedWord += guessWordSection.children[j].innerHTML;
       }
-      console.log(letterCount, answer.length);
-      console.log(guessedWord, answer);
       if (guessedWord === answer) {
-        console.log(inArr, wrongArr);
         gameWon();
-      } else {
-        guessAgain();
       }
     }
   }
 });
 
-// document.addEventListener("keydown", (e) => {
-//   // console.log(e.key);
-//   if (e.code.length === 4) {
-//     // console.log(e.code[e.code.length - 1]);
-//     checkLetter(e.key);
-//     addLetter(e.key);
-//     console.log(wordEl.children.length);
-//     /**
-//      *  for (let i = 0; i < guessWordSection.children.length; i++) {
-//       if (letter === answer[i]) {
-//         guessWordSection.children[i].style.color = "#442342";
-//         guessWordSection.children[i].innerHTML = letter;
-//         console.log("letterCount", letterCount);
-//         letterCount += 1;
-//       }
-//     }
-//      */
-//   }
-//   if (e.key === "Enter") {
-//     // console.log("user entered");
-//     if (lettersGuessed !== answer.length) {
-//       incompleteWord();
-//     } else {
-//       if (guessedWord === answer) {
-//         gameWon();
-//       } else {
-//         guessAgain();
-//       }
-//     }
-//   }
-//   if (e.key === "Backspace") {
-//     console.log(lettersGuessed);
-//     removeLetter();
-//   }
-// });
-function removeLetter() {
-  lettersGuessed--;
-  if (lettersGuessed < 0) {
-    lettersGuessed = 0;
-  }
-  // console.log(guessedWord);
-  console.log("removed", guessedWord.slice(0, -1));
-  guessedWord = guessedWord.slice(0, -1);
-  $(`#letter_${lettersGuessed}`).text("_");
-}
-function guessAgain() {
-  console.log("guess again");
-}
 function gameWon() {
   $("#myModal").modal();
   $("#restart_button").on("click", function (e) {
     e.preventDefault();
-
     resetGame();
   });
 }
 function resetGame() {
-  wordEl.html("");
+  guessWordSection.innerHTML = "";
   generateWord();
-  $("#myModal").modal("hide");
+  clearCanvas();
+  context.strokeStyle = "#444";
+  context.lineWidth = 10;
+  context.beginPath();
+  context.moveTo(175, 225);
+  context.lineTo(5, 225);
+  context.moveTo(40, 225);
+  context.lineTo(40, 5);
+  context.lineTo(100, 5);
+  context.lineTo(100, 25);
+  context.stroke();
+  step = 0;
+  answer = words[Math.floor(Math.random() * words.length)];
 }
-function incompleteWord() {
-  alert("Finish typing the word");
-}
+
 function addLetter(letter) {
   if (lettersGuessed !== answer.length) {
     $(`#letter_${lettersGuessed}`).text(letter);
     guessedWord += letter;
     lettersGuessed++;
-    // console.log(lettersGuessed);
-    // console.log("added", guessedWord);
   }
 }
-const canvas = document.getElementById("hangman");
-const context = canvas.getContext("2d");
 
 clearCanvas = () => {
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -291,49 +233,3 @@ Draw = (part) => {
       break;
   }
 };
-
-const draws = [
-  "head",
-  // "rightEye",
-  // "leftEye",
-  "body",
-  "rightHarm",
-  "leftHarm",
-  "rightLeg",
-  "leftLeg",
-  "rightFoot",
-  "leftFoot",
-];
-var step = 0;
-
-const next = document.getElementById("next");
-context.strokeStyle = "#444";
-context.lineWidth = 10;
-context.beginPath();
-context.moveTo(175, 225);
-context.lineTo(5, 225);
-context.moveTo(40, 225);
-context.lineTo(40, 5);
-context.lineTo(100, 5);
-context.lineTo(100, 25);
-context.stroke();
-next.addEventListener("click", function () {
-  Draw(draws[step++]);
-  if (undefined === draws[step]) this.disabled = true;
-});
-
-document.getElementById("reset").addEventListener("click", function () {
-  clearCanvas();
-  context.strokeStyle = "#444";
-  context.lineWidth = 10;
-  context.beginPath();
-  context.moveTo(175, 225);
-  context.lineTo(5, 225);
-  context.moveTo(40, 225);
-  context.lineTo(40, 5);
-  context.lineTo(100, 5);
-  context.lineTo(100, 25);
-  context.stroke();
-  step = 0;
-  next.disabled = false;
-});
