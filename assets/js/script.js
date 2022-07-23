@@ -5,7 +5,7 @@ const keyboardArr = [
   ["Z", "X", "C", "V", "B", "N", "M"],
 ];
 var words = ["javascript", "pet", "dinosaur", "toddler", "antacid"];
-var answer = words[Math.floor(Math.random() * words.length)];
+var answer;
 let lettersGuessed = 0;
 var guessedWord = "";
 var guessWordSection = document.getElementById("guess_word_section");
@@ -31,7 +31,6 @@ const draws = [
 ];
 
 var step = 0;
-
 context.strokeStyle = "#444";
 context.lineWidth = 10;
 context.beginPath();
@@ -48,6 +47,102 @@ function init() {
   generateWord();
 }
 
+function generateWord() {
+  answer = words[Math.floor(Math.random() * words.length)];
+  console.log(answer);
+
+  for (i = 0; i < answer.length; i++) {
+    var letterDiv = document.createElement("div");
+    letterDiv.innerHTML = "_";
+    letterDiv.setAttribute("tabindex", i);
+    letterDiv.setAttribute("id", i);
+    letterDiv.setAttribute("class", "letter");
+    guessWordSection.appendChild(letterDiv);
+  }
+}
+function wrongGuess(letter) {
+  console.log(letter);
+  wrongArr.push(letter);
+  var wrongLetter = document.createElement("div");
+  wrongLetter.innerText = letter;
+  wrongGuessSection.appendChild(wrongLetter);
+  $(`#${letter.toUpperCase()}`)[0].disabled = true;
+  drawMan();
+}
+function drawMan() {
+  Draw(draws[step++]);
+
+  if (undefined === draws[step]) {
+    gameOver();
+  }
+}
+function gameOver() {
+  $("#gameOverModal").modal();
+  $("#reset_button").on("click", function (e) {
+    e.preventDefault();
+    $("#gameOverModal").modal("hide");
+
+    resetGame();
+  });
+}
+function resetGame() {
+  $("#myModal").modal("hide");
+  guessWordSection.innerHTML = "";
+
+  clearCanvas();
+  context.strokeStyle = "#444";
+  context.lineWidth = 10;
+  context.beginPath();
+  context.moveTo(175, 225);
+  context.lineTo(5, 225);
+  context.moveTo(40, 225);
+  context.lineTo(40, 5);
+  context.lineTo(100, 5);
+  context.lineTo(100, 25);
+  context.stroke();
+  step = 0;
+  inArr = [];
+  wrongArr = [];
+  guessedWord = "";
+  letterCount = 0;
+  wrongGuessSection.innerHTML = "";
+  // answer = words[Math.floor(Math.random() * words.length)];
+  // console.log(answer);
+  generateWord();
+}
+
+function guessWord(letter) {
+  console.log(inArr, wrongArr);
+  if (inArr.includes(letter)) {
+    letterCount -= 1;
+  }
+  if (!answer.includes(letter)) {
+    if (!wrongArr.includes(letter)) {
+      wrongGuess(letter);
+    }
+  }
+  if (answer.includes(letter)) {
+    if (!inArr.includes(letter)) {
+      inArr.push(letter);
+    }
+  }
+  for (let i = 0; i < guessWordSection.children.length; i++) {
+    if (letter === answer[i]) {
+      guessWordSection.children[i].innerHTML = letter;
+      letterCount += 1;
+    }
+  }
+  console.log(letterCount, answer.length);
+  if (letterCount === answer.length) {
+    for (let j = 0; j < guessWordSection.children.length; j++) {
+      guessedWord += guessWordSection.children[j].innerHTML;
+    }
+    console.log(guessedWord);
+    if (guessedWord === answer) {
+      gameWon();
+    }
+  }
+}
 function generateKeyboard() {
   for (let i = 0; i < keyboardArr.length; i++) {
     var rowEl = $("<div>").addClass("row");
@@ -62,8 +157,8 @@ function generateKeyboard() {
           e.preventDefault();
           // console.log(e.target.innerHTML.toLowerCase());
           if (e.target.innerHTML.length === 1) {
-            console.log(e.target.innerHTML.toLowerCase());
-            addLetter(e.target.innerHTML.toLowerCase());
+            let letter = e.target.innerHTML.toLowerCase();
+            guessWord(letter);
           }
         });
       buttonEl.appendTo(colEl);
@@ -71,61 +166,10 @@ function generateKeyboard() {
   }
 }
 
-function generateWord() {
-  for (i = 0; i < answer.length; i++) {
-    var letterDiv = document.createElement("div");
-    letterDiv.innerHTML = "_";
-    letterDiv.setAttribute("tabindex", i);
-    letterDiv.setAttribute("id", i);
-    letterDiv.setAttribute("class", "letter");
-    guessWordSection.appendChild(letterDiv);
-  }
-}
-
 document.addEventListener("keypress", (e) => {
   var letter = e.code[e.code.length - 1].toLowerCase();
   if (e.code.length === 4) {
-    if (inArr.includes(letter)) {
-      letterCount -= 1;
-    }
-    if (!answer.includes(letter)) {
-      if (!wrongArr.includes(letter)) {
-        console.log(letter);
-        wrongArr.push(letter);
-        var wrongLetter = document.createElement("div");
-        wrongLetter.innerText = letter;
-        wrongGuessSection.appendChild(wrongLetter);
-        $(`#${letter.toUpperCase()}`)[0].disabled = true;
-        Draw(draws[step++]);
-        if (undefined === draws[step]) {
-          $("#gameOverModal").modal();
-          $("#reset_button").on("click", function (e) {
-            e.preventDefault();
-            $("#gameOverModal").modal("hide");
-            resetGame();
-          });
-        }
-      }
-    }
-    if (answer.includes(letter)) {
-      if (!inArr.includes(letter)) {
-        inArr.push(letter);
-      }
-    }
-    for (let i = 0; i < guessWordSection.children.length; i++) {
-      if (letter === answer[i]) {
-        guessWordSection.children[i].innerHTML = letter;
-        letterCount += 1;
-      }
-    }
-    if (letterCount === answer.length) {
-      for (let j = 0; j < guessWordSection.children.length; j++) {
-        guessedWord += guessWordSection.children[j].innerHTML;
-      }
-      if (guessedWord === answer) {
-        gameWon();
-      }
-    }
+    guessWord(letter);
   }
 });
 
@@ -136,31 +180,14 @@ function gameWon() {
     resetGame();
   });
 }
-function resetGame() {
-  guessWordSection.innerHTML = "";
-  generateWord();
-  clearCanvas();
-  context.strokeStyle = "#444";
-  context.lineWidth = 10;
-  context.beginPath();
-  context.moveTo(175, 225);
-  context.lineTo(5, 225);
-  context.moveTo(40, 225);
-  context.lineTo(40, 5);
-  context.lineTo(100, 5);
-  context.lineTo(100, 25);
-  context.stroke();
-  step = 0;
-  answer = words[Math.floor(Math.random() * words.length)];
-}
 
-function addLetter(letter) {
-  if (lettersGuessed !== answer.length) {
-    $(`#letter_${lettersGuessed}`).text(letter);
-    guessedWord += letter;
-    lettersGuessed++;
-  }
-}
+// function addLetter(letter) {
+//   if (lettersGuessed !== answer.length) {
+//     $(`#letter_${lettersGuessed}`).text(letter);
+//     guessedWord += letter;
+//     lettersGuessed++;
+//   }
+// }
 
 clearCanvas = () => {
   context.clearRect(0, 0, canvas.width, canvas.height);
